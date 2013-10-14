@@ -7,12 +7,12 @@
 #define MY_UUID { 0x5C, 0x1C, 0x2B, 0xE7, 0x80, 0x91, 0x4F, 0x95, 0xAB, 0xAA, 0x51, 0xE8, 0x0A, 0xA8, 0x9D, 0x4C }
 PBL_APP_INFO(MY_UUID,
              "Timer", "Follett Co.",
-             1, 0, /* App version */
+             1, 1, /* App version */
              DEFAULT_MENU_ICON,
              APP_INFO_STANDARD_APP);
 
 #define BUTTON_CLICK_TIME_SHIFT 30
-#define INITIAL_TIME 5*60
+#define INITIAL_TIME 3*60
 
 bool listening_for_time_modification = true;
 

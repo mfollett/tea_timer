@@ -1,5 +1,11 @@
-
-{"friendlyVersion": "1.0",
- "versionDefName": "TIMER_RESOURCES",
- "media": [ ]
+{
+    "media": [
+        {
+            "defName": "DUMMY",
+            "type": "raw",
+            "file": "resource_map.json"
+        }
+    ],
+    "friendlyVersion": "VERSION",
+    "versionDefName": "TIMER_RESOURCES"
 }

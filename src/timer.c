@@ -35,8 +35,8 @@ void handle_second_tick() {
     update_display_with_time(time);
 }
 
-void start_timer() {
-    listening_for_time_modification = false;
+void toggle_timer() {
+	listening_for_time_modification = ! listening_for_time_modification;
 }
 
 void handle_up() {
@@ -54,7 +54,7 @@ void handle_down() {
 }
 
 void click_config_provider(ClickConfig **config, Window *window) {
-    config[BUTTON_ID_SELECT]->click.handler = (ClickHandler) start_timer;
+    config[BUTTON_ID_SELECT]->click.handler = (ClickHandler) toggle_timer;
     config[BUTTON_ID_UP]    ->click.handler = (ClickHandler) handle_up;
     config[BUTTON_ID_DOWN]  ->click.handler = (ClickHandler) handle_down;
 

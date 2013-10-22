@@ -41,14 +41,14 @@ void toggle_timer() {
 
 void handle_up() {
     if(listening_for_time_modification) {
-        add_time(BUTTON_CLICK_TIME_SHIFT);
+        subtract_time(BUTTON_CLICK_TIME_SHIFT);
         update_display_with_time(current_time());
     }
 }
 
 void handle_down() {
     if(listening_for_time_modification) {
-        subtract_time(BUTTON_CLICK_TIME_SHIFT);
+        add_time(BUTTON_CLICK_TIME_SHIFT);
         update_display_with_time(current_time());
     }
 }

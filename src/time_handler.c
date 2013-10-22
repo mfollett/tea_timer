@@ -4,13 +4,15 @@ timer_t time_left;
 
 void add_time(timer_t amount) {
     if(time_left < 99*60) {
-        time_left += amount;
+        //time_left += amount;
+		time_left += amount - (time_left % amount);
     }
 }
 
 void subtract_time(timer_t amount) {
     if(time_left > amount) {
-        time_left -= amount;
+        //time_left -= amount;
+		time_left -= ( ((time_left%amount)==0) ? amount : (time_left%amount) );
     } else {
         time_left = 0;
     }

@@ -1,82 +1,78 @@
-#include "pebble_os.h"
-#include "pebble_app.h"
+#include <pebble.h>
 #include "time_handler.h"
 #include "display.h"
 
-
-#define MY_UUID { 0x5C, 0x1C, 0x2B, 0xE7, 0x80, 0x91, 0x4F, 0x95, 0xAB, 0xAA, 0x51, 0xE8, 0x0A, 0xA8, 0x9D, 0x4C }
-PBL_APP_INFO(MY_UUID,
-             "Timer", "Follett Co.",
-             1, 1, /* App version */
-             DEFAULT_MENU_ICON,
-             APP_INFO_STANDARD_APP);
+#ifndef TOGGLE
+#define TOGGLE(x) x = !x
+#endif
 
 #define BUTTON_CLICK_TIME_SHIFT 30
 #define INITIAL_TIME 3*60
 
-bool listening_for_time_modification = true;
+bool timer_running = false;
 
 void handle_second_tick() {
     int time = current_time();
 
-    if( ! listening_for_time_modification) {
+	decrement_time();
 
-        decrement_time();
+    if(time == 0) {
+        alert();
+    }
 
-        if(time == 0) {
-            alert();
-        }
-
-        if( time < 5 && time > 0) {
-            warning();
-        }
+    if( time < 5 && time > 0) {
+        warning();
     }
 
     update_display_with_time(time);
 }
 
 void toggle_timer() {
-	listening_for_time_modification = ! listening_for_time_modification;
+	TOGGLE(timer_running);
+	if ( timer_running ) {
+		tick_timer_service_subscribe(SECOND_UNIT, (TickHandler) handle_second_tick);
+	} else {
+		tick_timer_service_unsubscribe();
+	}
 }
 
 void handle_up() {
-    if(listening_for_time_modification) {
+    if( ! timer_running ) {
         subtract_time(BUTTON_CLICK_TIME_SHIFT);
         update_display_with_time(current_time());
     }
 }
 
 void handle_down() {
-    if(listening_for_time_modification) {
+    if( ! timer_running ) {
         add_time(BUTTON_CLICK_TIME_SHIFT);
         update_display_with_time(current_time());
     }
 }
 
-void click_config_provider(ClickConfig **config, Window *window) {
-    config[BUTTON_ID_SELECT]->click.handler = (ClickHandler) toggle_timer;
-    config[BUTTON_ID_UP]    ->click.handler = (ClickHandler) handle_up;
-    config[BUTTON_ID_DOWN]  ->click.handler = (ClickHandler) handle_down;
-
-    config[BUTTON_ID_UP]  ->click.repeat_interval_ms = 100;
-    config[BUTTON_ID_DOWN]->click.repeat_interval_ms = 100;
+void click_config_provider(void *context) {
+	window_set_click_context(BUTTON_ID_UP, context);
+	window_set_click_context(BUTTON_ID_SELECT, context);
+	window_set_click_context(BUTTON_ID_DOWN, context);
+	window_single_click_subscribe(BUTTON_ID_UP, (ClickHandler) handle_up);
+	window_single_click_subscribe(BUTTON_ID_SELECT, (ClickHandler) toggle_timer);
+	window_single_click_subscribe(BUTTON_ID_DOWN, (ClickHandler) handle_down);
 }
 
-void handle_init(AppContextRef ctx) {
-  initialize_display();
-  window_set_click_config_provider(get_window(), (ClickConfigProvider) click_config_provider);
-
-  set_time(INITIAL_TIME);
-  handle_second_tick(ctx, NULL);
+void handle_init() {
+	initialize_time_handler();
+	set_time(INITIAL_TIME);
+	initialize_display();
+	window_set_click_config_provider(get_window(), (ClickConfigProvider) click_config_provider);
 }
 
-void pbl_main(void *params) {
-  PebbleAppHandlers handlers = {
-    .init_handler = &handle_init,
-    .tick_info = {
-        .tick_handler = &handle_second_tick,
-        .tick_units   = SECOND_UNIT
-    }
-  };
-  app_event_loop(params, &handlers);
+void handle_deinit(void) {
+	deinitialize_time_handler();
+	deinitialize_display();
+}
+
+int main(void) {
+	handle_init();
+	app_event_loop();
+	handle_deinit();
 }

@@ -1,0 +1,18 @@
+{
+    "versionLabel": "1.0",
+    "uuid": "081b46ac-5530-413c-b82e-a192fb698838",
+    "appKeys": {},
+    "longName": "Tea Timer",
+    "versionCode": 14,
+    "capabilities": [
+        ""
+    ],
+    "shortName": "Tea Timer",
+    "companyName": "",
+    "watchapp": {
+        "watchface": false
+    },
+    "resources": {
+        "media": []
+    }
+}

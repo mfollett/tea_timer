@@ -27,7 +27,7 @@ void handle_second_tick() {
     update_display_with_time(time);
 }
 
-void toggle_timer() {
+void toggle_timer(ClickRecognizerRef recognizer, void *context) {
 	TOGGLE(timer_running);
 	if ( timer_running ) {
 		tick_timer_service_subscribe(SECOND_UNIT, (TickHandler) handle_second_tick);
@@ -36,14 +36,14 @@ void toggle_timer() {
 	}
 }
 
-void handle_up() {
+void handle_up(ClickRecognizerRef recognizer, void *context) {
     if( ! timer_running ) {
         subtract_time(BUTTON_CLICK_TIME_SHIFT);
         update_display_with_time(current_time());
     }
 }
 
-void handle_down() {
+void handle_down(ClickRecognizerRef recognizer, void *context) {
     if( ! timer_running ) {
         add_time(BUTTON_CLICK_TIME_SHIFT);
         update_display_with_time(current_time());
@@ -54,16 +54,16 @@ void click_config_provider(void *context) {
 	window_set_click_context(BUTTON_ID_UP, context);
 	window_set_click_context(BUTTON_ID_SELECT, context);
 	window_set_click_context(BUTTON_ID_DOWN, context);
-	window_single_click_subscribe(BUTTON_ID_UP, (ClickHandler) handle_up);
-	window_single_click_subscribe(BUTTON_ID_SELECT, (ClickHandler) toggle_timer);
-	window_single_click_subscribe(BUTTON_ID_DOWN, (ClickHandler) handle_down);
+	window_single_repeating_click_subscribe(BUTTON_ID_UP, 60, handle_up);
+	window_single_click_subscribe(BUTTON_ID_SELECT, toggle_timer);
+	window_single_repeating_click_subscribe(BUTTON_ID_DOWN, 60, handle_down);
 }
 
 void handle_init() {
 	initialize_time_handler();
 	set_time(INITIAL_TIME);
 	initialize_display();
-	window_set_click_config_provider(get_window(), (ClickConfigProvider) click_config_provider);
+	window_set_click_config_provider(get_window(), click_config_provider);
 }
 
 void handle_deinit(void) {

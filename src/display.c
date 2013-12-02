@@ -1,4 +1,3 @@
-//#include <time.h> //already defined in <pebble.h>!
 #include "display.h"
 #include "time_handler.h"
 
@@ -57,8 +56,6 @@ void initialize_display() {
 	timer = text_layer_create(GRect(14, 49, 130, 50));
 	text_layer_set_text_color(timer, GColorWhite);
 	text_layer_set_background_color(timer, GColorClear);
-	//text_layer_set_text_alignment(&timer, GTextAlignmentCenter);
-	//text_layer_set_font(&timer, fonts_get_system_font(FONT_KEY_GOTHAM_30_BLACK));
 	text_layer_set_font(timer, fonts_get_system_font(FONT_KEY_BITHAM_42_MEDIUM_NUMBERS));
 	
 	layer_add_child(window_get_root_layer(window), text_layer_get_layer(timer));

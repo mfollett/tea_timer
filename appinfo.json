@@ -3,11 +3,11 @@
     "uuid": "081b46ac-5530-413c-b82e-a192fb698838",
     "appKeys": {},
     "longName": "Tea Timer",
-    "versionCode": 128408,
+    "versionCode": 14,
     "capabilities": [
         ""
     ],
-    "shortName": "tea_timer",
+    "shortName": "Tea Timer",
     "companyName": "bennettp123",
     "watchapp": {
         "watchface": false

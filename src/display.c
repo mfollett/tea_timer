@@ -9,8 +9,8 @@
 bool flash_background = true;
 bool light_enabled    = false;
 
-Window *window = NULL;
-TextLayer *timer = NULL;
+static Window *window = NULL;
+static TextLayer *timer = NULL;
 
 void update_display_with_time(int time_left) {
 	if (!timer) { return; }

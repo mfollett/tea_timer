@@ -1,18 +1,26 @@
 {
-    "versionLabel": "1.0",
-    "uuid": "081b46ac-5530-413c-b82e-a192fb698838",
     "appKeys": {},
-    "longName": "Tea Timer",
-    "versionCode": 14,
     "capabilities": [
         ""
     ],
+    "companyName": "Ouroboros",
+    "longName": "Tea Timer",
+    "projectType": "native",
+    "resources": {
+        "media": [
+            {
+                "file": "images/tea_timer_icon.png",
+                "menuIcon": true,
+                "name": "TEA_TIMER_ICON",
+                "type": "png"
+            }
+        ]
+    },
     "shortName": "Tea Timer",
-    "companyName": "",
+    "uuid": "081b46ac-5530-413c-b82e-a192fb698839",
+    "versionCode": 14,
+    "versionLabel": "1.0",
     "watchapp": {
         "watchface": false
-    },
-    "resources": {
-        "media": []
     }
 }

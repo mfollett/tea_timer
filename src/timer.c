@@ -38,14 +38,14 @@ void toggle_timer(ClickRecognizerRef recognizer, void *context) {
 
 void handle_up(ClickRecognizerRef recognizer, void *context) {
     if( ! timer_running ) {
-        subtract_time(BUTTON_CLICK_TIME_SHIFT);
+        add_time(BUTTON_CLICK_TIME_SHIFT);
         update_display_with_time(current_time());
     }
 }
 
 void handle_down(ClickRecognizerRef recognizer, void *context) {
     if( ! timer_running ) {
-        add_time(BUTTON_CLICK_TIME_SHIFT);
+        subtract_time(BUTTON_CLICK_TIME_SHIFT);
         update_display_with_time(current_time());
     }
 }

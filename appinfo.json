@@ -9,6 +9,26 @@
     "resources": {
         "media": [
             {
+                "file": "images/pause_icon.png",
+                "name": "PAUSE_ICON",
+                "type": "png"
+            },
+            {
+                "file": "images/play_icon.png",
+                "name": "PLAY_ICON",
+                "type": "png"
+            },
+            {
+                "file": "images/minus_icon.png",
+                "name": "MINUS_ICON",
+                "type": "png"
+            },
+            {
+                "file": "images/plus_icon.png",
+                "name": "PLUS_ICON",
+                "type": "png"
+            },
+            {
                 "file": "images/tea_timer_icon.png",
                 "menuIcon": true,
                 "name": "TEA_TIMER_ICON",

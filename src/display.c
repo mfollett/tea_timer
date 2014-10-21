@@ -71,7 +71,7 @@ void initialize_display() {
 	window_stack_push(window, true);
   	window_set_background_color(window, GColorBlack);
 
-	timer = text_layer_create(GRect(0, 30, 144 - ACTION_BAR_WIDTH, 138));
+	timer = text_layer_create(GRect(0, 48, 144 - ACTION_BAR_WIDTH, 138));
 	text_layer_set_text_color(timer, GColorWhite);
     text_layer_set_text_alignment(timer, GTextAlignmentCenter);
 	text_layer_set_background_color(timer, GColorClear);

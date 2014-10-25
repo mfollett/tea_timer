@@ -9,23 +9,29 @@
     "resources": {
         "media": [
             {
-                "file": "images/pause_icon.png",
-                "name": "PAUSE_ICON",
+                "characterRegex": "[0-9:]",
+                "file": "fonts/Dosis-Watch.ttf",
+                "name": "FONT_DOSIS_WATCH_46",
+                "type": "font"
+            },
+            {
+                "file": "images/plus_icon_white.png",
+                "name": "PLUS_ICON",
                 "type": "png"
             },
             {
-                "file": "images/play_icon.png",
+                "file": "images/play_icon_white.png",
                 "name": "PLAY_ICON",
                 "type": "png"
             },
             {
-                "file": "images/minus_icon.png",
-                "name": "MINUS_ICON",
+                "file": "images/pause_icon_white.png",
+                "name": "PAUSE_ICON",
                 "type": "png"
             },
             {
-                "file": "images/plus_icon.png",
-                "name": "PLUS_ICON",
+                "file": "images/minus_icon_white.png",
+                "name": "MINUS_ICON",
                 "type": "png"
             },
             {

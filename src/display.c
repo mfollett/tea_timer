@@ -1,105 +1,102 @@
 #include "display.h"
-#include "time_handler.h"
+#include "util.h"
 
-#ifndef TOGGLE
-#define TOGGLE(x) x = !x
-#endif
+typedef struct TimerDisplay {
+    Window *window;
+    TextLayer *time_text;
+    ActionBarLayer *action_bar;
+    InverterLayer *inverter;
+    GBitmap *bitmap_plus_icon;
+    GBitmap *bitmap_play_icon;
+    GBitmap *bitmap_minus_icon;
+    GBitmap *bitmap_pause_icon;
+} TimerDisplay;
 
-bool flash_background = true;
-bool light_enabled    = false;
+TimerDisplay* timer_display_create() {
+    TimerDisplay* self = calloc(1, sizeof(TimerDisplay));
 
-static Window *window = NULL;
-static TextLayer *timer = NULL;
-static ActionBarLayer *action_bar = NULL;
+    self->bitmap_plus_icon = gbitmap_create_with_resource(RESOURCE_ID_PLUS_ICON);
+    self->bitmap_play_icon = gbitmap_create_with_resource(RESOURCE_ID_PLAY_ICON);
+    self->bitmap_minus_icon = gbitmap_create_with_resource(RESOURCE_ID_MINUS_ICON);
+    self->bitmap_pause_icon = gbitmap_create_with_resource(RESOURCE_ID_PAUSE_ICON);
+    
+    self->window = window_create();
+    window_stack_push(self->window, true);
+  	window_set_background_color(self->window, GColorWhite);
 
-static GBitmap *bitmap_plus_icon = NULL;
-static GBitmap *bitmap_play_icon = NULL;
-static GBitmap *bitmap_minus_icon = NULL;
+	self->time_text = text_layer_create(GRect(0, 48, 144 - ACTION_BAR_WIDTH, 138));
+	text_layer_set_text_color(self->time_text, GColorBlack);
+    text_layer_set_text_alignment(self->time_text, GTextAlignmentCenter);
+	text_layer_set_background_color(self->time_text, GColorClear);
+	text_layer_set_font(self->time_text, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DOSIS_WATCH_46)));
+	layer_add_child(window_get_root_layer(self->window), text_layer_get_layer(self->time_text));
 
-void update_display_with_time(int time_left) {
-	if (!timer) { return; }
-	
-    static char time_text[] = "00:00:00";
+    self->action_bar = action_bar_layer_create();
+    action_bar_layer_add_to_window(self->action_bar, self->window);
+
+    self->inverter = inverter_layer_create(GRect(0, 0, 144, 168));
+    layer_set_hidden(inverter_layer_get_layer(self->inverter), true);
+    layer_add_child(window_get_root_layer(self->window), inverter_layer_get_layer(self->inverter));
+
+    timer_display_update(self, 0);
+    timer_display_set_mode(self, STOPPED);
+    return self;
+}
+
+void timer_display_destroy(TimerDisplay *display) {
+	window_destroy(display->window);
+	text_layer_destroy(display->time_text);
+    action_bar_layer_destroy(display->action_bar);
+    inverter_layer_destroy(display->inverter);
+    gbitmap_destroy(display->bitmap_play_icon);
+    gbitmap_destroy(display->bitmap_plus_icon);
+    gbitmap_destroy(display->bitmap_minus_icon);
+    gbitmap_destroy(display->bitmap_pause_icon);
+    free(display);
+}
+
+void timer_display_update(TimerDisplay *display, int time_left) {
+    static char time_text[] = "00:00";
     struct tm pebble_time_left = {
         .tm_sec = time_left%60,
         .tm_min = time_left/60
     };
 
 	strftime(time_text, sizeof(time_text), "%M:%S", &pebble_time_left);
-
-    text_layer_set_text(timer, time_text);
+    text_layer_set_text(display->time_text, time_text);
 }
 
-void alert() {
+void timer_display_set_click_config_provider(TimerDisplay *display, ClickConfigProvider provider, void *context) {
+    action_bar_layer_set_context(display->action_bar, context);
+    action_bar_layer_set_click_config_provider(display->action_bar, provider);
+}
+
+void timer_display_set_mode(TimerDisplay *display, TimerDisplayMode mode) {
+    switch (mode) {
+        case STOPPED:
+            action_bar_layer_set_icon(display->action_bar, BUTTON_ID_UP, display->bitmap_plus_icon);
+            action_bar_layer_set_icon(display->action_bar, BUTTON_ID_SELECT, display->bitmap_play_icon);
+            action_bar_layer_set_icon(display->action_bar, BUTTON_ID_DOWN, display->bitmap_minus_icon);
+            break;
+        default:
+            action_bar_layer_set_icon(display->action_bar, BUTTON_ID_UP, NULL);
+            action_bar_layer_set_icon(display->action_bar, BUTTON_ID_SELECT, display->bitmap_pause_icon);
+            action_bar_layer_set_icon(display->action_bar, BUTTON_ID_DOWN, NULL);
+            break;
+    }
+}
+
+void timer_display_alert(TimerDisplay *display) {
+    layer_set_hidden(inverter_layer_get_layer(display->inverter), true);
     vibes_short_pulse();
-    TOGGLE(light_enabled);
-    // XXX Need to figure out how to do this in a way that doesn't cause the
-    // light to just stay on.
-    //light_enable(light_enabled);
 }
 
-void warning() {
-    int foreground = (flash_background ? GColorBlack : GColorWhite);
-    int background = (flash_background ? GColorWhite : GColorBlack);
-    text_layer_set_text_color(timer, foreground);
-    window_set_background_color(window, background);
-    TOGGLE(flash_background);
+void timer_display_warning(TimerDisplay *display) {
+    layer_set_hidden(inverter_layer_get_layer(display->inverter),
+                     !layer_get_hidden(inverter_layer_get_layer(display->inverter)));
 }
 
-Window* get_window() {
-    return window;
-}
-
-void initialize_display() {
-	Window *old_window = window;
-	TextLayer *old_timer = timer;
-	ActionBarLayer *old_action_bar = action_bar;
-
-    if (!bitmap_play_icon) {
-        bitmap_play_icon = gbitmap_create_with_resource(RESOURCE_ID_PLAY_ICON);
-    }
-    
-    if (!bitmap_plus_icon) {
-        bitmap_plus_icon = gbitmap_create_with_resource(RESOURCE_ID_PLUS_ICON);
-    }
-
-    if (!bitmap_minus_icon) {
-        bitmap_minus_icon = gbitmap_create_with_resource(RESOURCE_ID_MINUS_ICON);
-    }
-
-	window = window_create();
-	window_stack_push(window, true);
-  	window_set_background_color(window, GColorBlack);
-
-	timer = text_layer_create(GRect(0, 48, 144 - ACTION_BAR_WIDTH, 138));
-	text_layer_set_text_color(timer, GColorWhite);
-    text_layer_set_text_alignment(timer, GTextAlignmentCenter);
-	text_layer_set_background_color(timer, GColorClear);
-	text_layer_set_font(timer, fonts_get_system_font(FONT_KEY_BITHAM_42_MEDIUM_NUMBERS));
-	
-	layer_add_child(window_get_root_layer(window), text_layer_get_layer(timer));
-	text_layer_set_text(timer, "Starting...");
-
-    action_bar = action_bar_layer_create();
-    action_bar_layer_set_background_color(action_bar, GColorClear);
-    action_bar_layer_set_icon(action_bar, BUTTON_ID_UP, bitmap_plus_icon);
-    action_bar_layer_set_icon(action_bar, BUTTON_ID_SELECT, bitmap_play_icon);
-    action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, bitmap_minus_icon);
-
-    action_bar_layer_add_to_window(action_bar, window);
-
-	update_display_with_time((int) current_time());
-	
-	if (old_window) { window_destroy(old_window); }
-	if (old_timer) { text_layer_destroy(old_timer); }
-    if (old_action_bar) { action_bar_layer_destroy(old_action_bar); }
-}
-
-void deinitialize_display() {
-	if (window) { window_destroy(window); window = NULL; }
-	if (timer) { text_layer_destroy(timer); timer = NULL; }
-    if (action_bar) { action_bar_layer_destroy(action_bar); action_bar = NULL; }
-    if (bitmap_play_icon) { gbitmap_destroy(bitmap_play_icon); bitmap_play_icon = NULL; }
-    if (bitmap_plus_icon) { gbitmap_destroy(bitmap_plus_icon); bitmap_plus_icon = NULL; }
-    if (bitmap_minus_icon) { gbitmap_destroy(bitmap_minus_icon); bitmap_minus_icon = NULL; }
+void timer_display_cancel(TimerDisplay *display) {
+    layer_set_hidden(inverter_layer_get_layer(display->inverter), true);
+    vibes_cancel();
 }

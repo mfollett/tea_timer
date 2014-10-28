@@ -1,18 +1,52 @@
 {
-    "versionLabel": "1.0",
-    "uuid": "081b46ac-5530-413c-b82e-a192fb698838",
     "appKeys": {},
-    "longName": "Tea Timer",
-    "versionCode": 14,
     "capabilities": [
         ""
     ],
+    "companyName": "Ouroboros",
+    "longName": "Tea Timer",
+    "projectType": "native",
+    "resources": {
+        "media": [
+            {
+                "characterRegex": "[0-9:]",
+                "file": "fonts/Dosis-Watch.ttf",
+                "name": "FONT_DOSIS_WATCH_46",
+                "type": "font"
+            },
+            {
+                "file": "images/plus_icon_white.png",
+                "name": "PLUS_ICON",
+                "type": "png"
+            },
+            {
+                "file": "images/play_icon_white.png",
+                "name": "PLAY_ICON",
+                "type": "png"
+            },
+            {
+                "file": "images/pause_icon_white.png",
+                "name": "PAUSE_ICON",
+                "type": "png"
+            },
+            {
+                "file": "images/minus_icon_white.png",
+                "name": "MINUS_ICON",
+                "type": "png"
+            },
+            {
+                "file": "images/tea_timer_icon.png",
+                "menuIcon": true,
+                "name": "TEA_TIMER_ICON",
+                "type": "png"
+            }
+        ]
+    },
     "shortName": "Tea Timer",
-    "companyName": "",
+    "uuid": "081b46ac-5530-413c-b82e-a192fb698839",
+    "versionCode": 14,
+    "versionLabel": "1.0",
     "watchapp": {
         "watchface": false
-    },
-    "resources": {
-        "media": []
     }
 }
